@@ -55,12 +55,12 @@ def default_config() -> config_dict.ConfigDict:
       # c1=orientation, c2=action_rate, c3=torques, c4=dof_limits, c5=dof_acc
       reward_config=config_dict.create(
           scales=config_dict.create(
-              orientation=0.15,         
-              action_rate=-0.1,        
+              orientation=1.0,         
+              action_rate=-0.05,        
               termination=-1.0,         # negative reward for unsuccessful termination
-              termination_good=5.0,     # positive reward for successful termination
+              termination_good=50.0,     # positive reward for successful termination
               dof_pos_limits=-1.0,      
-              torques=-0.01,            
+              torques=-0.001,            
               pose=-0.1,
               stay_still=0.0,
               energy=0.0,
@@ -326,8 +326,8 @@ class Handstand(go1_base.Go1Env):
       ) -> jax.Array:
     up_vector = self.get_upvector(data)
     desired_vector = jp.array([0, 0, 1])
-    orientation_good = jp.dot(up_vector, desired_vector) > 0.95
-    return orientation_good & (~self._get_termination(data, info, contact))
+    orientation_good = jp.dot(up_vector, desired_vector) > 0.98
+    return orientation_good
 
   def _get_obs(
       self,

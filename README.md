@@ -31,7 +31,7 @@ pip install rscope
 
 This project could be trained with two different implementations of **PPO** algorithm, logs and checkpoints are saved in `logs` directory.
 
-- To train with **[RSL-RL](https://github.com/leggedrobotics/rsl_rl)**
+- To train with **[RSL-RL](https://github.com/leggedrobotics/rsl_rl)** (Recommended)
 
   ```bash
   python learning/train_rsl_rl.py --env_name Go1Handstand --use_wandb=True
@@ -49,7 +49,7 @@ Render the behaviour from the resulting policy with top tracing camera
 
 - Render a policy trained with **RSL-RL**
 
-  > **[NOTE]** please make sure the folder of the run to be evaluated is under the directory of `logs/rslrl-training-logs`
+  > **[NOTE]** Please make sure the folder of the run to be evaluated is under the directory of `logs/rslrl-training-logs`
 
   ```bash
   python learning/train_rsl_rl.py --env_name Go1Handstand --play_only --load_run_name <run_name> --camera=top

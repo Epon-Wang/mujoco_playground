@@ -42,7 +42,7 @@ def default_config() -> config_dict.ConfigDict:
       energy_termination_threshold=np.inf,
       timeout_steps=3000,  # 60 seconds: 60 / 0.02 = 3000 steps  
       noise_config=config_dict.create(
-          level=1.0,  # Set to 0.0 to disable noise.
+          level=0.0,  # Set to 0.0 to disable noise. (Ideal condition)
           scales=config_dict.create(
               joint_pos=0.01,
               joint_vel=1.5,

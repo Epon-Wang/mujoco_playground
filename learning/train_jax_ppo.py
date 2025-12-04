@@ -145,7 +145,7 @@ _DETERMINISTIC_RSCOPE = flags.DEFINE_boolean(
     "Run deterministic rollouts for the rscope viewer",
 )
 _VIDEO_WIDTH = flags.DEFINE_integer(
-    "video_width",
+    "video_with",
     1920,
     "Width of the rendered video in pixels",
 )

@@ -13,9 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 """MuJoCo Playground."""
-from mujoco_playground._src import dm_control_suite
 from mujoco_playground._src import locomotion
-from mujoco_playground._src import manipulation
 from mujoco_playground._src import registry
 from mujoco_playground._src import wrapper
 from mujoco_playground._src import wrapper_torch
@@ -28,9 +26,7 @@ from mujoco_playground._src.mjx_env import step
 # pylint: enable=g-importing-member
 
 __all__ = [
-    "dm_control_suite",
     "locomotion",
-    "manipulation",
     "MjxEnv",
     "registry",
     "render_array",

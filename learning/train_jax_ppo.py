@@ -36,9 +36,7 @@ import mujoco
 import mujoco_playground
 from mujoco_playground import registry
 from mujoco_playground import wrapper
-from mujoco_playground.config import dm_control_suite_params
 from mujoco_playground.config import locomotion_params
-from mujoco_playground.config import manipulation_params
 import tensorboardX
 import wandb
 
@@ -179,18 +177,8 @@ _TRAINING_METRICS_STEPS = flags.DEFINE_integer(
 
 
 def get_rl_config(env_name: str) -> config_dict.ConfigDict:
-  if env_name in mujoco_playground.manipulation._envs:
-    if _VISION.value:
-      return manipulation_params.brax_vision_ppo_config(env_name, _IMPL.value)
-    return manipulation_params.brax_ppo_config(env_name, _IMPL.value)
-  elif env_name in mujoco_playground.locomotion._envs:
+  if env_name in mujoco_playground.locomotion._envs:
     return locomotion_params.brax_ppo_config(env_name, _IMPL.value)
-  elif env_name in mujoco_playground.dm_control_suite._envs:
-    if _VISION.value:
-      return dm_control_suite_params.brax_vision_ppo_config(
-          env_name, _IMPL.value
-      )
-    return dm_control_suite_params.brax_ppo_config(env_name, _IMPL.value)
 
   raise ValueError(f"Env {env_name} not found in {registry.ALL_ENVS}.")
 
@@ -295,7 +283,7 @@ def main(argv):
   print(f"Experiment name: {exp_name}")
 
   # Set up logging directory
-  logdir = epath.Path("logs").resolve() / exp_name
+  logdir = epath.Path("logs/brax-training-logs").resolve() / exp_name
   logdir.mkdir(parents=True, exist_ok=True)
   print(f"Logs are being stored in: {logdir}")
 

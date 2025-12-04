@@ -1,0 +1,55 @@
+No checkpoint path provided, not restoring from checkpoint
+Checkpoint path: /home/epon/mujoco_playground/logs/Go1Handstand-20251204-001112/checkpoints
+0: reward=0.291
+W1204 00:13:03.674308 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=1] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+1638400: reward=3.590
+W1204 00:13:41.251108 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=2] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+3276800: reward=5.912
+W1204 00:13:55.931725 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=3] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+4915200: reward=6.943
+W1204 00:14:10.675080 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=4] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+6553600: reward=6.921
+W1204 00:14:25.370536 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=5] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+8192000: reward=7.420
+W1204 00:14:40.115677 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=6] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+9830400: reward=7.690
+W1204 00:14:54.889608 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=7] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+11468800: reward=8.042
+W1204 00:15:09.670802 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=8] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+13107200: reward=8.306
+W1204 00:15:24.371868 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=9] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+14745600: reward=8.600
+W1204 00:15:39.169960 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=10] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+16384000: reward=9.030
+W1204 00:15:54.029602 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=11] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+18022400: reward=7.805
+W1204 00:16:08.899197 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=12] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+19660800: reward=7.700
+W1204 00:16:23.723630 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=13] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+21299200: reward=8.082
+W1204 00:16:38.569149 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=14] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+22937600: reward=8.473
+W1204 00:16:53.417198 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=15] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+24576000: reward=7.934
+W1204 00:17:08.245634 124297711105152 future.py:328] [process=0][thread=MainThread][operation_id=16] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+26214400: reward=7.405
+Traceback (most recent call last):
+  File "/home/epon/mujoco_playground/learning/train_jax_ppo.py", line 538, in <module>
+    app.run(main)
+  File "/home/epon/anaconda3/envs/Doggy/lib/python3.11/site-packages/absl/app.py", line 316, in run
+    _run_main(main, args)
+  File "/home/epon/anaconda3/envs/Doggy/lib/python3.11/site-packages/absl/app.py", line 261, in _run_main
+    sys.exit(main(argv))
+             ^^^^^^^^^^
+  File "/home/epon/mujoco_playground/learning/train_jax_ppo.py", line 453, in main
+    make_inference_fn, params, _ = train_fn(  # pylint: disable=no-value-for-parameter
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/epon/anaconda3/envs/Doggy/lib/python3.11/site-packages/brax/training/agents/ppo/train.py", line 707, in train
+    training_epoch_with_timing(training_state, env_state, epoch_keys)
+  File "/home/epon/anaconda3/envs/Doggy/lib/python3.11/site-packages/brax/training/agents/ppo/train.py", line 580, in training_epoch_with_timing
+    result = training_epoch(training_state, env_state, key)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/epon/anaconda3/envs/Doggy/lib/python3.11/site-packages/jax/_src/pmap.py", line 72, in wrapped
+    outs = jitted_f(*flat_global_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

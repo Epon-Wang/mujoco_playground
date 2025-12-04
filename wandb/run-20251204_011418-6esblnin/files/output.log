@@ -1,0 +1,153 @@
+No checkpoint path provided, not restoring from checkpoint
+Checkpoint path: /home/epon/mujoco_playground/logs/Go1Handstand-20251204-011417/checkpoints
+0: reward=0.395
+W1204 01:16:08.938977 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=1] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+1638400: reward=5.408
+W1204 01:16:46.455183 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=2] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+3276800: reward=8.663
+W1204 01:17:01.132984 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=3] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+4915200: reward=10.035
+W1204 01:17:15.883301 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=4] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+6553600: reward=9.609
+W1204 01:17:30.686895 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=5] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+8192000: reward=9.892
+W1204 01:17:45.459590 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=6] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+9830400: reward=9.347
+W1204 01:18:00.251620 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=7] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+11468800: reward=9.548
+W1204 01:18:15.054921 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=8] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+13107200: reward=8.657
+W1204 01:18:29.822305 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=9] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+14745600: reward=8.780
+W1204 01:18:44.595711 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=10] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+16384000: reward=9.712
+W1204 01:18:59.350074 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=11] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+18022400: reward=8.468
+W1204 01:19:14.105407 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=12] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+19660800: reward=8.380
+W1204 01:19:28.964631 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=13] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+21299200: reward=8.844
+W1204 01:19:43.838675 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=14] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+22937600: reward=9.412
+W1204 01:19:58.659899 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=15] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+24576000: reward=9.307
+W1204 01:20:13.455711 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=16] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+26214400: reward=9.097
+W1204 01:20:28.293508 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=17] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+27852800: reward=9.223
+W1204 01:20:43.100849 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=18] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+29491200: reward=9.470
+W1204 01:20:58.932772 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=19] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+31129600: reward=9.477
+W1204 01:21:14.328009 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=20] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+32768000: reward=9.351
+W1204 01:21:29.837877 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=21] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+34406400: reward=10.684
+W1204 01:21:45.375432 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=22] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+36044800: reward=10.448
+W1204 01:22:00.609897 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=23] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+37683200: reward=9.986
+W1204 01:22:15.958214 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=24] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+39321600: reward=10.725
+W1204 01:22:31.158598 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=25] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+40960000: reward=12.078
+W1204 01:22:46.468051 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=26] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+42598400: reward=12.235
+W1204 01:23:01.778179 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=27] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+44236800: reward=10.243
+W1204 01:23:17.166033 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=28] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+45875200: reward=10.800
+W1204 01:23:32.948534 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=29] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+47513600: reward=10.919
+W1204 01:23:48.813692 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=30] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+49152000: reward=9.859
+W1204 01:24:04.325762 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=31] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+50790400: reward=10.928
+W1204 01:24:19.860141 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=32] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+52428800: reward=10.750
+W1204 01:24:35.615920 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=33] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+54067200: reward=10.102
+W1204 01:24:51.268733 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=34] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+55705600: reward=11.391
+W1204 01:25:06.678161 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=35] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+57344000: reward=11.072
+W1204 01:25:22.210442 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=36] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+58982400: reward=12.124
+W1204 01:25:37.748918 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=37] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+60620800: reward=11.084
+W1204 01:25:53.300976 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=38] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+62259200: reward=10.693
+W1204 01:26:08.713680 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=39] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+63897600: reward=10.254
+W1204 01:26:23.928248 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=40] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+65536000: reward=10.830
+W1204 01:26:38.966165 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=41] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+67174400: reward=10.766
+W1204 01:26:54.395005 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=42] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+68812800: reward=9.960
+W1204 01:27:09.701840 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=43] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+70451200: reward=10.993
+W1204 01:27:25.169656 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=44] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+72089600: reward=10.775
+W1204 01:27:40.626856 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=45] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+73728000: reward=10.713
+W1204 01:27:56.034887 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=46] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+75366400: reward=10.669
+W1204 01:28:11.506801 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=47] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+77004800: reward=9.415
+W1204 01:28:27.066744 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=48] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+78643200: reward=10.364
+W1204 01:28:42.413944 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=49] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+80281600: reward=10.013
+W1204 01:28:57.679052 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=50] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+81920000: reward=10.509
+W1204 01:29:13.123438 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=51] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+83558400: reward=10.710
+W1204 01:29:28.487595 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=52] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+85196800: reward=11.060
+W1204 01:29:43.895613 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=53] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+86835200: reward=10.272
+W1204 01:29:59.044204 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=54] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+88473600: reward=10.660
+W1204 01:30:14.031047 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=55] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+90112000: reward=11.010
+W1204 01:30:29.389702 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=56] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+91750400: reward=10.832
+W1204 01:30:44.799020 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=57] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+93388800: reward=10.675
+W1204 01:31:00.024547 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=58] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+95027200: reward=10.610
+W1204 01:31:15.415402 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=59] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+96665600: reward=11.324
+W1204 01:31:30.812604 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=60] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+98304000: reward=10.929
+W1204 01:31:45.817866 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=61] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+99942400: reward=11.427
+W1204 01:32:01.028198 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=62] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+101580800: reward=11.459
+W1204 01:32:16.283094 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=63] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+103219200: reward=10.345
+W1204 01:32:31.549614 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=64] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+104857600: reward=10.086
+W1204 01:32:47.398117 132733473436800 future.py:328] [process=0][thread=MainThread][operation_id=65] _SignalingThread.join() waiting for signals ([]) blocking the main thread will slow down blocking save times. This is likely due to main thread calling result() on a CommitFuture.
+106496000: reward=11.051
+Traceback (most recent call last):
+  File "/home/epon/mujoco_playground/learning/train_jax_ppo.py", line 538, in <module>
+    app.run(main)
+  File "/home/epon/anaconda3/envs/Doggy/lib/python3.11/site-packages/absl/app.py", line 316, in run
+    _run_main(main, args)
+  File "/home/epon/anaconda3/envs/Doggy/lib/python3.11/site-packages/absl/app.py", line 261, in _run_main
+    sys.exit(main(argv))
+             ^^^^^^^^^^
+  File "/home/epon/mujoco_playground/learning/train_jax_ppo.py", line 453, in main
+    make_inference_fn, params, _ = train_fn(  # pylint: disable=no-value-for-parameter
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/epon/anaconda3/envs/Doggy/lib/python3.11/site-packages/brax/training/agents/ppo/train.py", line 707, in train
+    training_epoch_with_timing(training_state, env_state, epoch_keys)
+  File "/home/epon/anaconda3/envs/Doggy/lib/python3.11/site-packages/brax/training/agents/ppo/train.py", line 580, in training_epoch_with_timing
+    result = training_epoch(training_state, env_state, key)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/epon/anaconda3/envs/Doggy/lib/python3.11/site-packages/jax/_src/pmap.py", line 72, in wrapped
+    outs = jitted_f(*flat_global_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

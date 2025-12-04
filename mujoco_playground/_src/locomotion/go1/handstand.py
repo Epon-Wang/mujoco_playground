@@ -40,15 +40,14 @@ def default_config() -> config_dict.ConfigDict:
       soft_joint_pos_limit_factor=0.9,
       init_from_crouch=0.0,
       energy_termination_threshold=np.inf,
-      timeout_steps=3000,  # 60 seconds: 60 / 0.02 = 3000 steps  
       noise_config=config_dict.create(
           level=0.0,  # Set to 0.0 to disable noise. (Ideal condition)
           scales=config_dict.create(
               joint_pos=0.01,
               joint_vel=1.5,
               gyro=0.2,
-              gravity=0.05,
-              linvel=0.1,
+              gravity=0.0,
+              linvel=0.0,
           ),
       ),
       # Reward Configuration Scales
@@ -59,7 +58,7 @@ def default_config() -> config_dict.ConfigDict:
               termination=-1.0,         # negative reward for unsuccessful termination
               dof_pos_limits=-1.0,      
               torques=0.0,            
-              pose=0.0,
+              pose=-1e-3,
               stay_still=-0.01,          # penalize linear and angular velocity
               energy=0.0,
               dof_acc=0.0,            
@@ -203,9 +202,9 @@ class Handstand(go1_base.Go1Env):
     # droll     = U(-0.5, 0.5)
     # dpitch    = U(-0.5, 0.5)
     # dyaw      = U(-0.5, 0.5)
-    qvel_nonzero = jp.zeros(self.mjx_model.nv)
-    rng, key = jax.random.split(rng)
-    qvel_nonzero = qvel_nonzero.at[0:6].set(jax.random.uniform(key, (6,), minval=-0.5, maxval=0.5))
+    qvel_nonzero = jp.zeros(self.mjx_model.nv) # default zero
+    # rng, key = jax.random.split(rng)
+    # qvel_nonzero = qvel_nonzero.at[0:6].set(jax.random.uniform(key, (6,), minval=-0.5, maxval=0.5))
     qvel = jp.where(if_init_from_crouch, jp.zeros(self.mjx_model.nv), qvel_nonzero)
 
     return rng, qpos, qvel
@@ -268,6 +267,9 @@ class Handstand(go1_base.Go1Env):
 
     # State - Data
     data = mjx_env.step(self.mjx_model, state.data, motor_targets, self.n_substeps)
+    
+    # Zero-Gravity: Manually zero out base linear velocity for native simulation drift error
+    data = data.replace(qvel=data.qvel.at[0:3].set(0.0))
 
     contact = jp.array([
         data.sensordata[self._mj_model.sensor_adr[sensorid]] > 0
@@ -279,10 +281,9 @@ class Handstand(go1_base.Go1Env):
 
     # State - Termination
     terminate = self._get_termination(data, state.info, contact)
-    terminate_timeout = self._get_termination_timeout(state.info)
 
     # State - Reward
-    rewards = self._get_reward(data, action, state.info, terminate, terminate_timeout)
+    rewards = self._get_reward(data, action, state.info, terminate)
     rewards = {
         k: v * self._config.reward_config.scales[k] for k, v in rewards.items()
     }
@@ -295,7 +296,7 @@ class Handstand(go1_base.Go1Env):
       state.metrics[f"reward/{k}"] = v
 
     # Terminate on both bad and good terminations
-    done = (terminate | terminate_timeout).astype(reward.dtype)
+    done = terminate.astype(reward.dtype)
     state = state.replace(data=data, obs=obs, reward=reward, done=done)
 
     return state
@@ -316,12 +317,8 @@ class Handstand(go1_base.Go1Env):
     energy_termination = energy > self._config.energy_termination_threshold
     return contact_termination | energy_termination
   
-  def _get_termination_timeout(
-      self,
-      info:     dict[str, Any],
-    ) -> jax.Array:
-    return info["step"] >= self._config.timeout_steps
 
+  # Observations
   def _get_obs(
       self,
       data:     mjx.Data,
@@ -415,7 +412,6 @@ class Handstand(go1_base.Go1Env):
       action:   jax.Array,
       info:     dict[str, Any],
       terminate:     jax.Array,
-      terminate_timeout: jax.Array,
       ) -> dict[str, jax.Array]:
     
     up_vector = data.site_xmat[self._imu_site_id] @ jp.array([0.0, 0.0, 1.0])
@@ -423,10 +419,8 @@ class Handstand(go1_base.Go1Env):
     
     joint_torques = data.actuator_force
     
-    done_bad = (terminate & (~terminate_timeout)).astype(jp.float32)
-    done_timeout = (terminate_timeout).astype(jp.float32)
+    done_bad = terminate.astype(jp.float32)
     
-
     rewards = {
         "orientation":          self._reward_orientation(up_vector, self._desired_up_vec),
         "action_rate":          self._cost_action_rate(action, info),

@@ -26,6 +26,7 @@ import numpy as np
 from mujoco_playground._src import mjx_env
 from mujoco_playground._src.locomotion.go1 import base as go1_base
 from mujoco_playground._src.locomotion.go1 import go1_constants as consts
+from mujoco_playground._src.locomotion.go1 import reward_utils as rewd
 
 
 def default_config() -> config_dict.ConfigDict:
@@ -55,22 +56,23 @@ def default_config() -> config_dict.ConfigDict:
       # Reward Configuration Scales
       reward_config=config_dict.create(
           scales=config_dict.create(
-              height=1.0,
-              orientation=2.0,         
-              action_rate=-0.001,
-              dof_pos_limits=-1.0,      
-              torques=-1e-5,            
-              pose=2.0,
-              stay_still=-0.02,
-              stand_still=1.0,
-              dof_acc=-2e-7,
-              feet_contact=1.0,
+              orientation=      2.0,
+              pose=             2.0,
+              stay_still=      -0.02,
+              action_rate=     -0.001,
+              torques=         -1e-5,
+              dof_pos_limits=  -1.0,
+              dof_acc=         -2e-7,
+              stand_still=      1.0,
+              feet_contact=     1.0,
+              height=           1.0,
           ),
       ),
       impl="jax",
       nconmax=30 * 8192,
       njmax=200,
   )
+
 
 
 class Handstand(go1_base.Go1Env):
@@ -100,24 +102,19 @@ class Handstand(go1_base.Go1Env):
       self
       ) -> None:
     
+    # Pose/Position Parameters
     self._init_q = jp.array(self._mj_model.keyframe("home").qpos)
     self._crouch_q = jp.array(self._mj_model.keyframe("pre_recovery").qpos)
     self._default_pose = jp.array(self._mj_model.keyframe("home").qpos[7:])
 
+    # Joint Limit Parameters
     self._lowers, self._uppers = self.mj_model.jnt_range[1:].T
     c = (self._lowers + self._uppers) / 2
     r = self._uppers - self._lowers
     self._soft_lowers = c - 0.5 * r * self._config.soft_joint_pos_limit_factor
     self._soft_uppers = c + 0.5 * r * self._config.soft_joint_pos_limit_factor
 
-    self._torso_body_id = self._mj_model.body(consts.ROOT_BODY).id
-    self._feet_site_id = np.array(
-        [self._mj_model.site(name).id for name in consts.FEET_SITES]
-    )
-    self._floor_geom_id = self._mj_model.geom("floor").id
-    self._feet_geom_id = np.array(
-        [self._mj_model.geom(name).id for name in consts.FEET_GEOMS]
-    )
+    # Desired Task Parameters
     self._z_des = 0.275
     self._desired_up_vec = jp.array([0, 0, 1])
 
@@ -148,11 +145,7 @@ class Handstand(go1_base.Go1Env):
         "rr_hip",
     ]
 
-    self._unwanted_contact_geom_ids = np.array(
-        [self._mj_model.geom(name).id for name in geom_names]
-    )
-
-    # Contact sensor ids.
+    # Contact sensor ids
     self._fullcollision_floor_found_sensor = [
         self._mj_model.sensor(f"{geom}_floor_found").id
         for geom in geom_names
@@ -300,7 +293,6 @@ class Handstand(go1_base.Go1Env):
 
 
 
-  # Terminations
   def _get_termination(
       self,
       data:     mjx.Data,
@@ -314,7 +306,7 @@ class Handstand(go1_base.Go1Env):
     return contact_termination | energy_termination
   
 
-  # Observations
+  
   def _get_obs(
       self,
       data:     mjx.Data,
@@ -401,7 +393,7 @@ class Handstand(go1_base.Go1Env):
     }
 
 
-  # Rewards
+  
   def _get_reward(
       self,
       data:     mjx.Data,
@@ -420,31 +412,68 @@ class Handstand(go1_base.Go1Env):
     isStanding = isUpright * isAtDesiredHeight * isAllContact
     
     rewards = {
-        "height":               self._cost_height(torso_height, isAllContact),
-        "orientation":          self._reward_orientation(up_vector, self._desired_up_vec),
-        "action_rate":          self._cost_action_rate(action, info),
-        "torques":              self._cost_torques(joint_torques),
-        "dof_pos_limits":       self._cost_joint_pos_limits(data.qpos[7:]),
-        "dof_acc":              self._cost_dof_acc(data.qacc[6:]),
-        "pose":                 self._reward_pose(data.qpos[7:], isUpright),
-        "stay_still":           self._cost_stay_still(data.qvel[:6]),
+        "orientation":          rewd._reward_orientation(up_vector, self._desired_up_vec),
+        "pose":                 rewd._reward_pose(data.qpos[7:], self._default_pose, isUpright),
+        "stay_still":           rewd._cost_stay_still_rpy(data.qvel[3:6]),
+        "action_rate":          rewd._cost_action_rate(action, info),
+        "torques":              rewd._cost_torques(joint_torques),
+        "dof_pos_limits":       rewd._cost_joint_pos_limits(self._soft_lowers, self._soft_uppers, data.qpos[7:]),
+        "dof_acc":              rewd._cost_dof_acc(data.qacc[6:]),
         "stand_still":          self._reward_stand_still(action, isStanding),
         "feet_contact":         self._reward_feet_contact(contactCount),
+        "height":               self._cost_height(torso_height, isAllContact),
     }
 
     return rewards
 
 
+
   # Boolean Gates
-  def _is_at_desired_height(self, z: jax.Array) -> jax.Array:
+  def _is_at_desired_height(
+      self, 
+      z: jax.Array
+      ) -> jax.Array:
+    """
+    Boolean Gate on whether the torso is at the desired height after landing
+    
+    Input:
+        - z: torso height
+    Output:
+        - whether torso is at desired height
+    """
     error = jp.abs(z - self._z_des)
     return error < self._config.tol_height
 
-  def _is_upright(self, vecA: jax.Array, vecB: jax.Array) -> jax.Array:
+  def _is_upright(
+      self, 
+      vecA: jax.Array, 
+      vecB: jax.Array
+      ) -> jax.Array:
+    """
+    Boolean Gate on whether Go1 is upright
+
+    Input:
+        - vecA: vector A
+        - vecB: vector B
+    Output:
+        - whether Go1 is upright
+    """
     error = jp.sum(jp.square(vecA - vecB))
     return error < self._config.tol_orientation
   
-  def _is_contact(self, data: mjx.Data) -> tuple[jax.Array, jax.Array]:
+  def _is_contact(
+      self, 
+      data: mjx.Data
+      ) -> tuple[jax.Array, jax.Array]:
+    """
+    Boolean Gate on whether all feet are in contact with the ground
+    
+    Input:
+        - data: mjx.Data
+    Output:
+        - whether all feet are in contact
+        - feet contact count
+    """
     feet_contact = jp.array([
         data.sensordata[self._mj_model.sensor_adr[sensorid]] > 0
         for sensorid in self._feet_floor_found_sensor
@@ -454,50 +483,59 @@ class Handstand(go1_base.Go1Env):
     return is_all_contact, contact_count
 
 
-  # Task-Specific Rewards
-  def _cost_stay_still(self, qvel: jax.Array) -> jax.Array:
-    return jp.sum(jp.square(qvel[3:6]))
 
-  def _cost_height(self, z: jax.Array, isAllContact: jax.Array) -> jax.Array:
+  # Task-Specific Rewards
+  def _cost_height(
+      self, 
+      z: jax.Array, 
+      isAllContact: jax.Array
+      ) -> jax.Array:
+    """
+    L2 Loss between torso height and desired height, exponentiated
+    
+    Input:
+        - z:            torso height
+        - isAllContact: Boolean gate on whether all feet are in contact with the ground
+    Output:
+        - reward
+    """
     error = jp.sum(jp.square(z - self._z_des))
     return jp.exp(-error) * isAllContact
 
-  def _reward_orientation(
-      self, vecA: jax.Array, vecB: jax.Array
-  ) -> jax.Array:
-    cos_dist = jp.dot(vecA, vecB)
-    normalized = 0.5 * cos_dist + 0.5
-    return jp.square(normalized)
-
-  def _reward_pose(self, qpos: jax.Array, isUpright: jax.Array) -> jax.Array:
-    poseError = jp.sum(jp.square(qpos - self._default_pose))
-    return jp.exp(-0.5 * poseError) * isUpright
-
-  def _reward_stand_still(self, action: jax.Array, isStanding: jax.Array) -> jax.Array:
+  def _reward_stand_still(
+      self, 
+      action: jax.Array, 
+      isStanding: jax.Array
+      ) -> jax.Array:
+    """
+    L2 Loss on zero-action after standing, exponentiated
+    
+    standing = standing upright at desired height with all feet on ground
+    
+    Input:
+        - action:      action taken
+        - isStanding:  Boolean gate on whether Go1 is standing properly
+    Output:
+        - reward
+    """
     cost = jp.sum(jp.square(action))
     return jp.exp(-0.5 * cost) * isStanding
 
-  def _reward_feet_contact(self, contactCount: jax.Array) -> jax.Array:
+  def _reward_feet_contact(
+      self,
+      contactCount: jax.Array
+      ) -> jax.Array:
+    """
+    L2 Loss on the number of feet in contact with the ground, exponentiated
+    
+    Input:
+        - contactCount: number of feet in contact with the ground
+    Output:
+        - reward
+    """
     error = jp.sum(jp.square(contactCount - 4))
     return jp.exp(-0.5 * error)
 
-
-  # General Rewards
-  def _cost_torques(self, torques: jax.Array) -> jax.Array:
-    return jp.sum(jp.square(torques))
-
-  def _cost_action_rate(
-      self, act: jax.Array, info: dict[str, Any]
-  ) -> jax.Array:
-    return jp.sum(jp.square(act - info["last_act"]))
-
-  def _cost_joint_pos_limits(self, qpos: jax.Array) -> jax.Array:
-    out_of_limits = -jp.clip(qpos - self._soft_lowers, None, 0.0)
-    out_of_limits += jp.clip(qpos - self._soft_uppers, 0.0, None)
-    return jp.sum(out_of_limits)
-
-  def _cost_dof_acc(self, qacc: jax.Array) -> jax.Array:
-    return jp.sum(jp.square(qacc))
 
 
 

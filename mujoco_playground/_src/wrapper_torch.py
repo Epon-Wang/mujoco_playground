@@ -91,9 +91,11 @@ class RSLRLBraxWrapper(VecEnv):
       randomization_fn=None,
       render_callback=None,
       device_rank=None,
+      cfg=None,
   ):
     import torch  # pytype: disable=import-error # pylint: disable=redefined-outer-name,unused-import,import-outside-toplevel
 
+    self.cfg = cfg
     self.seed = seed
     self.batch_size = num_actors
     self.num_envs = num_actors

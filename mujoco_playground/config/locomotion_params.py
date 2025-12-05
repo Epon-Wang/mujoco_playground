@@ -91,71 +91,8 @@ def brax_ppo_config(
         value_obs_key="privileged_state",
     )
 
-  elif env_name in ("G1JoystickFlatTerrain", "G1JoystickRoughTerrain"):
-    rl_config.num_timesteps = 200_000_000
-    rl_config.num_evals = 20
-    rl_config.clipping_epsilon = 0.2
-    rl_config.num_resets_per_eval = 1
-    rl_config.entropy_cost = 0.005
-    rl_config.network_factory = config_dict.create(
-        policy_hidden_layer_sizes=(512, 256, 128),
-        value_hidden_layer_sizes=(512, 256, 128),
-        policy_obs_key="state",
-        value_obs_key="privileged_state",
-    )
-
   elif env_name in (
-      "BerkeleyHumanoidJoystickFlatTerrain",
-      "BerkeleyHumanoidJoystickRoughTerrain",
-  ):
-    rl_config.num_timesteps = 150_000_000
-    rl_config.num_evals = 15
-    rl_config.clipping_epsilon = 0.2
-    rl_config.entropy_cost = 0.005
-    rl_config.network_factory = config_dict.create(
-        policy_hidden_layer_sizes=(512, 256, 128),
-        value_hidden_layer_sizes=(512, 256, 128),
-        policy_obs_key="state",
-        value_obs_key="privileged_state",
-    )
-
-  elif env_name in (
-      "T1JoystickFlatTerrain",
-      "T1JoystickRoughTerrain",
-  ):
-    rl_config.num_timesteps = 200_000_000
-    rl_config.num_evals = 20
-    rl_config.clipping_epsilon = 0.2
-    rl_config.num_resets_per_eval = 1
-    rl_config.entropy_cost = 0.005
-    rl_config.network_factory = config_dict.create(
-        policy_hidden_layer_sizes=(512, 256, 128),
-        value_hidden_layer_sizes=(512, 256, 128),
-        policy_obs_key="state",
-        value_obs_key="privileged_state",
-    )
-
-  elif env_name in ("ApolloJoystickFlatTerrain",):
-    rl_config.num_timesteps = 200_000_000
-    rl_config.num_evals = 20
-    rl_config.clipping_epsilon = 0.2
-    rl_config.num_resets_per_eval = 1
-    rl_config.entropy_cost = 0.005
-    rl_config.network_factory = config_dict.create(
-      policy_hidden_layer_sizes=(512, 256, 128),
-      value_hidden_layer_sizes=(512, 256, 128),
-      policy_obs_key="state",
-      value_obs_key="privileged_state",
-    )
-
-  elif env_name in (
-      "BarkourJoystick",
-      "H1InplaceGaitTracking",
-      "H1JoystickGaitTracking",
-      "Op3Joystick",
-      "SpotFlatTerrainJoystick",
-      "SpotGetup",
-      "SpotJoystickGaitTracking",
+      "EmptyList"
   ):
     pass  # use default config
   else:
@@ -212,11 +149,11 @@ def rsl_rl_config(
 
   if env_name in (
       "Go1Getup",
-      "BerkeleyHumanoidJoystickFlatTerrain",
-      "G1Joystick",
       "Go1JoystickFlatTerrain",
   ):
     rl_config.max_iterations = 1000
+  if env_name == "Go1Handstand":
+    rl_config.max_iterations = 3000
   if env_name == "Go1JoystickFlatTerrain":
     rl_config.algorithm.learning_rate = 3e-4
     rl_config.algorithm.schedule = "fixed"

@@ -30,7 +30,6 @@ import mujoco_playground
 from mujoco_playground import registry
 from mujoco_playground import wrapper_torch
 from mujoco_playground.config import locomotion_params
-from mujoco_playground.config import manipulation_params
 from rsl_rl.runners import OnPolicyRunner
 import torch
 import warp as wp
@@ -72,7 +71,7 @@ _USE_WANDB = flags.DEFINE_boolean(
     "Use Weights & Biases for logging (ignored in play-only mode).",
 )
 _SUFFIX = flags.DEFINE_string("suffix", None, "Suffix for the experiment name.")
-_SEED = flags.DEFINE_integer("seed", 1, "Random seed.")
+_SEED = flags.DEFINE_integer("seed", 114514, "Random seed.")
 _NUM_ENVS = flags.DEFINE_integer("num_envs", 4096, "Number of parallel envs.")
 _DEVICE = flags.DEFINE_string("device", "cuda:0", "Device for training.")
 _MULTI_GPU = flags.DEFINE_boolean(
@@ -83,12 +82,12 @@ _CAMERA = flags.DEFINE_string(
 )
 _VIDEO_WIDTH = flags.DEFINE_integer(
     "video_width",
-    640,
+    1920,
     "Width of the rendered video in pixels",
 )
 _VIDEO_HEIGHT = flags.DEFINE_integer(
     "video_height",
-    480,
+    1080,
     "Height of the rendered video in pixels",
 )
 _WP_KERNEL_CACHE_DIR = flags.DEFINE_string(
@@ -99,9 +98,7 @@ _WP_KERNEL_CACHE_DIR = flags.DEFINE_string(
 
 
 def get_rl_config(env_name: str) -> config_dict.ConfigDict:
-  if env_name in registry.manipulation._envs:
-    return manipulation_params.rsl_rl_config(env_name)
-  elif env_name in registry.locomotion._envs:
+  if env_name in registry.locomotion._envs:
     return locomotion_params.rsl_rl_config(env_name)
   else:
     raise ValueError(f"No RL config for {env_name}")
@@ -139,7 +136,7 @@ def main(argv):
   print(f"Experiment name: {exp_name}")
 
   # Logging directory
-  logdir = os.path.abspath(os.path.join("/tmp/rslrl-training-logs/", exp_name))
+  logdir = os.path.abspath(os.path.join("logs/rslrl-training-logs/", exp_name))
   os.makedirs(logdir, exist_ok=True)
   print(f"Logs are being stored in: {logdir}")
 
@@ -184,6 +181,7 @@ def main(argv):
       render_callback=render_callback,
       randomization_fn=randomizer,
       device_rank=device_rank,
+      cfg=env_cfg,
   )
 
   # Build RSL-RL config
@@ -208,7 +206,7 @@ def main(argv):
   # If resume, load from checkpoint
   if train_cfg.resume:
     resume_path = wrapper_torch.get_load_path(
-        "/tmp/rslrl-training-logs/",
+        "logs/rslrl-training-logs/",
         load_run=train_cfg.load_run,
         checkpoint=train_cfg.checkpoint,
     )
@@ -260,11 +258,11 @@ def main(argv):
 
   # Render
   scene_option = mujoco.MjvOption()
-  scene_option.flags[mujoco.mjtVisFlag.mjVIS_TRANSPARENT] = True
+  scene_option.flags[mujoco.mjtVisFlag.mjVIS_TRANSPARENT] = False
   scene_option.flags[mujoco.mjtVisFlag.mjVIS_PERTFORCE] = True
   scene_option.flags[mujoco.mjtVisFlag.mjVIS_CONTACTFORCE] = False
 
-  render_every = 2
+  render_every = 1
   # If your environment is wrapped multiple times, adjust as needed:
   base_env = eval_env  # or brax_env.env.env.env
   fps = 1.0 / base_env.dt / render_every

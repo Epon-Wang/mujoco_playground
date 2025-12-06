@@ -28,7 +28,7 @@ from mujoco_playground._src import mjx_env
 from mujoco_playground._src.locomotion.go1 import base as go1_base
 from mujoco_playground._src.locomotion.go1 import go1_constants as consts
 from mujoco_playground._src.locomotion.go1 import reward_utils as rewd
-from mujoco_playground._src.locomotion.go1.granuler_helper import GranularModules
+from mujoco_playground._src.locomotion.go1.granular import GranularModules
 
 
 def default_config() -> config_dict.ConfigDict:
@@ -68,7 +68,8 @@ def default_config() -> config_dict.ConfigDict:
               dof_acc=         -2e-7,
               stand_still=      1.0,
               feet_contact=     1.0,
-              height=           1.0,
+              height_standing=  1.0,
+              height_excess=   -0.1,
           ),
       ),
       impl="jax",
@@ -79,7 +80,7 @@ def default_config() -> config_dict.ConfigDict:
 
 
 class Handstand(go1_base.Go1Env):
-  """Landing task for Go1."""
+  """Landing task for Go1 on flat terrain"""
 
   def __init__(
       self,
@@ -88,6 +89,7 @@ class Handstand(go1_base.Go1Env):
       ) -> None:
     
     super().__init__(
+        # xml_path=consts.FULL_FLAT_TERRAIN_XML.as_posix(),
         xml_path=consts.GRANULAR_SCENE_XML.as_posix(),
         config=config,
         config_overrides=config_overrides,
@@ -98,7 +100,6 @@ class Handstand(go1_base.Go1Env):
     self._mjx_model = mjx.put_model(self._mj_model, impl=self._config.impl)
     
     self._post_init()
-
 
 
   def _post_init(
@@ -161,7 +162,6 @@ class Handstand(go1_base.Go1Env):
     ]
 
 
-
   def _domain_randomize(
       self,
       rng: jax.Array
@@ -212,7 +212,6 @@ class Handstand(go1_base.Go1Env):
     return rng, qpos, qvel
 
 
-
   def reset(
       self,
       rng: jax.Array
@@ -238,6 +237,7 @@ class Handstand(go1_base.Go1Env):
         "step": 0,
         "rng": rng,
         "last_act": jp.zeros(self.mjx_model.nu),
+        "hasContacted": jp.array(False),
     }
 
     # State - Metrics
@@ -257,7 +257,6 @@ class Handstand(go1_base.Go1Env):
 
     return mjx_env.State(data, obs, reward, done, metrics, info)
   
-
 
   def step(
       self,
@@ -301,7 +300,6 @@ class Handstand(go1_base.Go1Env):
     return state
 
 
-
   def _get_termination(
       self,
       data:     mjx.Data,
@@ -313,7 +311,6 @@ class Handstand(go1_base.Go1Env):
     energy = jp.sum(jp.abs(data.actuator_force) * jp.abs(data.qvel[6:]))
     energy_termination = energy > self._config.energy_termination_threshold
     return contact_termination | energy_termination
-  
 
   
   def _get_obs(
@@ -401,7 +398,6 @@ class Handstand(go1_base.Go1Env):
         "privileged_state": privileged_state,
     }
 
-
   
   def _get_reward(
       self,
@@ -411,7 +407,7 @@ class Handstand(go1_base.Go1Env):
       ) -> dict[str, jax.Array]:
     
     up_vector = data.site_xmat[self._imu_site_id] @ jp.array([0.0, 0.0, 1.0])
-    
+
     joint_torques = data.actuator_force
     torso_height = data.site_xpos[self._imu_site_id][2]
 
@@ -419,22 +415,28 @@ class Handstand(go1_base.Go1Env):
     isAtDesiredHeight = self._is_at_desired_height(torso_height)
     isAllContact, contactCount = self._is_contact(data)
     isStanding = isUpright * isAtDesiredHeight * isAllContact
+
+    hasContacted = info["hasContacted"] | isAllContact
+    info["hasContacted"] = hasContacted
+
+    # Torso Linear Velocity (x, y) and Angular Velocity (roll, pitch, yaw)
+    qvel_xyrpy = jp.concatenate([data.qvel[0:2], data.qvel[3:6]])
     
     rewards = {
         "orientation":          rewd._reward_orientation(up_vector, self._desired_up_vec),
         "pose":                 rewd._reward_pose(data.qpos[7:], self._default_pose, isUpright),
-        "stay_still":           rewd._cost_stay_still_rpy(data.qvel[3:6]),
+        "stay_still":           rewd._cost_stay_still(qvel_xyrpy),
         "action_rate":          rewd._cost_action_rate(action, info),
         "torques":              rewd._cost_torques(joint_torques),
         "dof_pos_limits":       rewd._cost_joint_pos_limits(self._soft_lowers, self._soft_uppers, data.qpos[7:]),
         "dof_acc":              rewd._cost_dof_acc(data.qacc[6:]),
         "stand_still":          self._reward_stand_still(action, isStanding),
         "feet_contact":         self._reward_feet_contact(contactCount),
-        "height":               self._cost_height(torso_height, isAllContact),
+        "height_standing":      self._reward_height(torso_height, isAllContact),
+        "height_excess":        self._cost_height(torso_height, info),
     }
 
     return rewards
-
 
 
   # Boolean Gates
@@ -492,15 +494,16 @@ class Handstand(go1_base.Go1Env):
     return is_all_contact, contact_count
 
 
-
   # Task-Specific Rewards
-  def _cost_height(
+  def _reward_height(
       self, 
       z: jax.Array, 
       isAllContact: jax.Array
       ) -> jax.Array:
     """
-    L2 Loss between torso height and desired height, exponentiated
+    L2 Loss between torso height and desired height during standing, exponentiated
+    
+    Only active when all feet are in contact with the ground
     
     Input:
         - z:            torso height
@@ -544,43 +547,47 @@ class Handstand(go1_base.Go1Env):
     """
     error = jp.sum(jp.square(contactCount - 4))
     return jp.exp(-0.5 * error)
+  
+  def _cost_height(
+      self, 
+      z:    jax.Array, 
+      info: dict[str, Any]
+      ) -> jax.Array:
+    """
+    L2 Loss on torso height excesses desired height after landing
+
+    Penalizing Go1 bouncing back in the air after landing
+    
+    Input:
+        - z:    torso height
+        - info: state information dictionary
+    Output:
+        - reward
+    """
+    error = jp.sum(jp.square(jp.maximum(z, self._z_des) - self._z_des))
+    return error * info["hasContacted"]
+
 
 
 class LandingWithGranular(Handstand):
-  """Landing task with Granular Terrain Dynamics (GranularModules).
-  
-  This environment extends Landing to include granular terrain forces
-  computed via GranularModules. The granular forces are applied at every
-  step by converting between JAX/MJX data and mujoco.MjData.
-  
-  Note: This requires the mujoco Python API and works best with Python
-  training loops (not JAX vmap-based loops).
-  
-  Usage:
-    config = landing.default_config()
-    config.use_granular_dynamics = True
-    env = landing.LandingWithGranular(config=config)
-  """
+  """Landing task for Go1 on granular terrain"""
 
   def __init__(
-    self,
-    config: config_dict.ConfigDict = default_config(),
-    config_overrides: Optional[Dict[str, Union[str, int, list[Any]]]] = None,
-  ):
-    """Initialize LandingWithGranular with granular terrain support.
-    
-    Args:
-      config: Environment configuration
-      config_overrides: Optional overrides to config
-    """
+      self,
+      config:           config_dict.ConfigDict = default_config(),
+      config_overrides: Optional[Dict[str, Union[str, int, list[Any]]]] = None,
+      ) -> None:
     super().__init__(
         config=config,
         config_overrides=config_overrides,
     )
     self._init_granular_dynamics()
 
-  def _init_granular_dynamics(self) -> None:
-    """Initialize GranularModules and related data structures."""
+
+  def _init_granular_dynamics(
+      self
+      ) -> None:
+    
     # Get foot geom IDs
     foot_ids = {name: self.mj_model.geom(name).id for name in consts.FEET_GEOMS}
     # Get reference and ground plane geom IDs
@@ -609,16 +616,21 @@ class LandingWithGranular(Handstand):
     
     print(f"[LandingWithGranular] Initialized with {len(self.foot_ids)} feet, ref_plane: {self.gm.refPlaneID}")
 
-  def step(self, state: mjx_env.State, action: jax.Array) -> mjx_env.State:
-    """Step with optional granular terrain forces applied."""
+
+  def step(
+      self, 
+      state: mjx_env.State, 
+      action: jax.Array
+      ) -> mjx_env.State:
+    
     motor_targets = state.data.ctrl + action * self._config.action_scale
     data = mjx_env.step(
         self.mjx_model, state.data, motor_targets, self.n_substeps
     )
 
-    # Compute and apply granular forces if enabled
+    # Compute and apply granular media forces if enabled
     if self._config.use_granular_dynamics:
-      data = self._compute_and_apply_granular_forces(data)
+      data = self._compute_gm_force(data)
 
     contact = jp.array([
         data.sensordata[self._mj_model.sensor_adr[sensorid]] > 0
@@ -642,19 +654,18 @@ class LandingWithGranular(Handstand):
     state = state.replace(data=data, obs=obs, reward=reward, done=done)
     return state
 
-  def _compute_and_apply_granular_forces(self, data: mjx.Data) -> mjx.Data:
-    """Compute granular forces and apply them to the robot.
+
+  def _compute_gm_force(
+      self, 
+      data: mjx.Data
+      ) -> mjx.Data:
+    """
+    Compute granular media forces and apply them to the robot
     
-    This method:
-    1. Computes granular terrain forces using GranularModules
-    2. Applies these forces to the robot's feet via xfrc_applied
-    3. Returns updated data with forces applied
-    
-    Args:
-      data: Current mjx.Data from physics step
-      
-    Returns:
-      Updated mjx.Data with granular forces applied
+    Input:
+        - data: Current mjx.Data from physics step
+    Output:
+        - Updated mjx.Data with granular media forces applied
     """
     try:
       # Safely convert JAX arrays to numpy for mujoco operations
@@ -667,10 +678,9 @@ class LandingWithGranular(Handstand):
       self.mj_data_granular.qvel[:] = qvel_np
       self.mj_data_granular.time = float(data.time)
       
-      # Forward kinematics to update geometry positions
       mujoco.mj_forward(self.mj_model, self.mj_data_granular)
       
-      # Compute granular forces for each foot
+      # Compute granular media forces
       gm_forces = self.gm.compute_GM_AllFoot(
           self.mj_model,
           self.mj_data_granular,
@@ -679,8 +689,7 @@ class LandingWithGranular(Handstand):
       )
       self._last_gm_forces = gm_forces
       
-      # Convert forces to JAX arrays and apply to xfrc_applied
-      # xfrc_applied format: [body_id] = [Fx, Fy, Fz, τx, τy, τz]
+      # Convert to JAX arrays
       xfrc_applied = np.zeros((self.mj_model.nbody, 6))
       
       for foot_name, force in gm_forces.items():
@@ -690,24 +699,27 @@ class LandingWithGranular(Handstand):
           # Apply force at body center (torque = 0 for now)
           xfrc_applied[body_id, :3] = force
         except KeyError:
-          pass  # Foot name not found
+          pass
       
       # Convert to JAX and update data
-      # Use jp.array to ensure it's a proper JAX array
       data = data.replace(xfrc_applied=jp.asarray(xfrc_applied))
       
       return data
       
     except Exception as e:
       # Silently fail - granular forces are optional
-      # Just return data unchanged
       self._last_gm_forces = {name: np.zeros(3) for name in consts.FEET_GEOMS}
       return data
 
-  def get_granular_forces(self) -> Dict[str, np.ndarray]:
-    """Get the last computed granular forces for each foot.
-    Returns:
-      Dictionary mapping foot names to 3D force vectors [Fx, Fy, Fz]
+
+  def get_granular_forces(
+      self
+      ) -> Dict[str, np.ndarray]:
+    """
+    Get the last computed granular media forces for each foot
+
+    output:
+        - Dictionary mapping foot names to 3D force vectors [Fx, Fy, Fz]
     """
     return self._last_gm_forces
 

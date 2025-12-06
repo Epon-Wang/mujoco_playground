@@ -96,7 +96,6 @@ class Handstand(go1_base.Go1Env):
     self._post_init()
 
 
-
   def _post_init(
       self
       ) -> None:
@@ -150,7 +149,6 @@ class Handstand(go1_base.Go1Env):
     ]
 
 
-
   def _domain_randomize(
       self,
       rng: jax.Array
@@ -201,7 +199,6 @@ class Handstand(go1_base.Go1Env):
     return rng, qpos, qvel
 
 
-
   def reset(
       self,
       rng: jax.Array
@@ -245,7 +242,6 @@ class Handstand(go1_base.Go1Env):
     reward, done = jp.zeros(2)
 
     return mjx_env.State(data, obs, reward, done, metrics, info)
-
 
 
   def step(
@@ -293,7 +289,6 @@ class Handstand(go1_base.Go1Env):
     return state
 
 
-
   def _get_termination(
       self,
       data:     mjx.Data,
@@ -305,7 +300,6 @@ class Handstand(go1_base.Go1Env):
     energy = jp.sum(jp.abs(data.actuator_force) * jp.abs(data.qvel[6:]))
     energy_termination = energy > self._config.energy_termination_threshold
     return contact_termination | energy_termination
-
 
 
   def _get_obs(
@@ -394,7 +388,6 @@ class Handstand(go1_base.Go1Env):
     }
 
 
-
   def _get_reward(
       self,
       data:     mjx.Data,
@@ -412,7 +405,7 @@ class Handstand(go1_base.Go1Env):
     rewards = {
         "orientation":          _reward_orientation(up_vector, self._desired_up_vec),
         "pose":                 _reward_pose(data.qpos[7:], self._default_pose, isUpright),
-        "stay_still":           _cost_stay_still_rpy(data.qvel[3:6]),
+        "stay_still":           _cost_stay_still(data.qvel[3:6]),
         "action_rate":          _cost_action_rate(action, info),
         "torques":              _cost_torques(joint_torques),
         "dof_pos_limits":       _cost_joint_pos_limits(self._soft_lowers, self._soft_uppers, data.qpos[7:]),

@@ -10,7 +10,7 @@ __all__ = [
     "_cost_action_rate",
     "_cost_joint_pos_limits",
     "_cost_dof_acc",
-    "_cost_stay_still_rpy",
+    "_cost_stay_still",
 ]
 
 
@@ -111,14 +111,15 @@ def _cost_dof_acc(
     return jp.sum(jp.square(qacc))
 
 
-def _cost_stay_still_rpy(
-        qvel_rpy: jax.Array
+def _cost_stay_still(
+        qvel: jax.Array
         ) -> jax.Array:
     """
-    L2 Loss on torso angular velocities (RPY)
+    L2 Loss on torso velocities
+    You can pass in either linear velocities or angular velocities or both
     Input:
-        - qvel_rpy: torso RPY velocities
+        - qvel: torso velocities of interest
     Output:
         - reward
     """
-    return jp.sum(jp.square(qvel_rpy))
+    return jp.sum(jp.square(qvel))
